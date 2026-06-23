@@ -299,6 +299,29 @@ At workspace scaffold time resolve and cache all three tiers. **T1 always takes 
 | Calculated Insights | `https://www.salesforce.com/eu/data/` |
 | Data Actions | `https://www.salesforce.com/eu/data/` |
 
+#### T2 — README Hero Image CDN (wp.sfdcdigital.com)
+
+All capability `README.md` and `docs/` header images **must** come from `https://wp.sfdcdigital.com`. **Never use Wikipedia, Wikimedia, or any other external CDN for Salesforce or partner brand images** — they are unreliable in GitHub rendering and violate brand guidelines.
+
+Use WebFetch on the T2 partner page to discover available images at scaffold time, then pick the most relevant marquee or hero image. Known working images:
+
+| Capability | Hero Image URL |
+|---|---|
+| Zero-Copy Databricks | `https://wp.sfdcdigital.com/en-us/wp-content/uploads/sites/4/2025/04/Databricks-Marquee_353ba8.png?w=1024` |
+| Zero-Copy Databricks (data-in) | `https://wp.sfdcdigital.com/en-us/wp-content/uploads/sites/4/2025/04/DataCloud-DataBricks-Data-In_a72bbf.png?w=1020` |
+| Zero-Copy Databricks (data-out) | `https://wp.sfdcdigital.com/en-us/wp-content/uploads/sites/4/2025/04/DataCloud-DataBricks-Data-Out_6a839f.png?w=1020` |
+| Zero-Copy Databricks (how it works) | `https://wp.sfdcdigital.com/en-us/wp-content/uploads/sites/4/2025/04/How-It-Works-Databricks_77fa2f.png?w=1024` |
+| Governance / Well-Architected | `https://wp.sfdcdigital.com/en-us/wp-content/uploads/sites/4/2024/05/01-resource-card-maintain-governance-upd.png?w=1024` |
+| Zero-Copy (access live data) | `https://wp.sfdcdigital.com/en-us/wp-content/uploads/sites/4/2024/05/02-resource-card-access-live-external-data-without-copying-upd.png?w=1024` |
+
+For capabilities not listed above, fetch the T2 partner page and extract `<img>` tags from `wp.sfdcdigital.com` to find the right image. Embed as:
+
+```markdown
+<img src="https://wp.sfdcdigital.com/en-us/wp-content/uploads/sites/4/..." alt="{Capability} — {Description}" width="760"/>
+```
+
+Use `width="760"` for README/docs headers. Use `width="320"` for inline content images.
+
 #### T3 — Developer Documentation URLs (Zero-Copy Databricks)
 
 | Document | URL | Use For |
