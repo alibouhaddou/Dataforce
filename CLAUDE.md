@@ -275,7 +275,7 @@ At workspace scaffold time resolve and cache all three tiers. **T1 always takes 
 |---|---|---|---|
 | **T1 — Technical Authority** | `architect.salesforce.com/docs/architect/reference-diagrams/` | Salesforce Architects | Architecture diagrams, official component names, integration patterns — cite in `docs/02` and `docs/08` |
 | **T2 — Product** | `salesforce.com/eu/data/partners/*` and `salesforce.com/eu/data/` | Salesforce Marketing | `What Salesforce Says` quotes, CDN imagery, customer stories — cite in `docs/01` and enrichment blocks |
-| **T3 — Developer** | `developer.salesforce.com`, Salesforce CLI docs, Data Cloud Developer Guide | Salesforce Engineering | CLI syntax, API reference, metadata schemas — cite in `docs/03–07` and all scripts |
+| **T3 — Developer** | `developer.salesforce.com/docs/data/data-cloud-int/guide`, Salesforce CLI docs, `docs.databricks.com` | Salesforce Engineering + Databricks | CLI syntax, API reference, metadata schemas, setup steps — cite in `docs/03–07` and all scripts |
 
 #### T1 — Reference Architecture URLs (resolve at scaffold time)
 
@@ -298,6 +298,27 @@ At workspace scaffold time resolve and cache all three tiers. **T1 always takes 
 | Identity Resolution | `https://www.salesforce.com/eu/data/` |
 | Calculated Insights | `https://www.salesforce.com/eu/data/` |
 | Data Actions | `https://www.salesforce.com/eu/data/` |
+
+#### T3 — Developer Documentation URLs (Zero-Copy Databricks)
+
+| Document | URL | Use For |
+|---|---|---|
+| Databricks connector overview | `https://developer.salesforce.com/docs/data/data-cloud-int/guide/c360-a-databricks-connector.html` | `docs/03` — connector types, mechanism overview |
+| File Federation setup | `https://developer.salesforce.com/docs/data/data-cloud-int/guide/c360-a-set-up-databricks-file-federation-connection.html` | `docs/03`, `lab-01` — connection fields, auth types, storage types |
+| Query Federation setup | `https://developer.salesforce.com/docs/data/data-cloud-int/guide/c360-a-set-up-data-federation-dbx-connection.html` | `docs/04` — JDBC connection, SQL Warehouse HTTP path |
+| Data 360 Integrations guide root | `https://developer.salesforce.com/docs/data/data-cloud-int/guide` | Index — navigate to sub-pages; all connector/integration docs |
+| Databricks Lakehouse Federation (File Sharing) | `https://docs.databricks.com/aws/en/query-federation/salesforce-data-cloud-file-sharing` | `docs/03`, `scripts/instructor/` — UC setup, Iceberg REST URL format, limitations |
+
+**File Federation key facts (from T3, grounded):**
+- Connector type: `Databricks` / connection type: `FileFederation`
+- Auth: PAT or IDP service principal
+- Storage type: `CATALOG_PROVIDED` (AWS/S3), `AZURE` (Azure ADLS Gen2)
+- Unity Catalog Iceberg REST URL format:
+  - AWS: `https://<workspace-instance>/api/2.1/unity-catalog/iceberg-rest`
+  - Azure: `https://adb-<workspace_id>.<n>.azuredatabricks.net/api/2.1/unity-catalog/iceberg-rest`
+- **Private Link NOT supported** for File Federation
+- Unity Catalog required (Hive Metastore not supported)
+- Iceberg V2/V3 deletion vectors not supported
 
 #### Enrichment Rules Per File
 
