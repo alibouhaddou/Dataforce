@@ -265,11 +265,32 @@ Every `.md` file in `docs/` must include:
 ← [{Prev Title}]({prev-file}.md) · [{Next Title} →]({next-file}.md)
 ```
 
-### Web Enrichment Source Map
+### Web Enrichment Source Map — 3-Tier Hierarchy
 
-At workspace scaffold time, resolve and store as a session variable `PARTNER_PAGE_URL` — the most specific Data 360 partner/capability page for this capability. Use it as the primary enrichment source for every file in that capability repo.
+At workspace scaffold time resolve and cache all three tiers. **T1 always takes precedence over T2 for architecture claims.** If T1 contradicts T2, T1 wins.
 
-| Capability | Primary Source URL |
+#### Tier Definitions
+
+| Tier | Source | Authority | Use For |
+|---|---|---|---|
+| **T1 — Technical Authority** | `architect.salesforce.com/docs/architect/reference-diagrams/` | Salesforce Architects | Architecture diagrams, official component names, integration patterns — cite in `docs/02` and `docs/08` |
+| **T2 — Product** | `salesforce.com/eu/data/partners/*` and `salesforce.com/eu/data/` | Salesforce Marketing | `What Salesforce Says` quotes, CDN imagery, customer stories — cite in `docs/01` and enrichment blocks |
+| **T3 — Developer** | `developer.salesforce.com`, Salesforce CLI docs, Data Cloud Developer Guide | Salesforce Engineering | CLI syntax, API reference, metadata schemas — cite in `docs/03–07` and all scripts |
+
+#### T1 — Reference Architecture URLs (resolve at scaffold time)
+
+| Capability | T1 Page | T1 Image | T1 Lucidchart |
+|---|---|---|---|
+| Zero-Copy Databricks | `https://architect.salesforce.com/docs/architect/reference-diagrams/guide/data360-databricks` | `https://architect.salesforce.com/ns-assets/data360_ref_arch/data360-databricks.png` | `https://lucid.app/lucidchart/editNew/e74f6e22-ce6d-4b6d-a258-76ddb8f73f4e` |
+| Zero-Copy Snowflake | `https://architect.salesforce.com/docs/architect/reference-diagrams/guide/snf-data-360` | `https://architect.salesforce.com/ns-assets/data360_ref_arch/data360-snf.png` | `https://lucid.app/lucidchart/editNew/b02236c2-f3f4-4de8-b13b-35f67fd5390d` |
+| Zero-Copy BigQuery / GCP | `https://architect.salesforce.com/docs/architect/reference-diagrams/guide/data360-gcp` | `https://architect.salesforce.com/ns-assets/data360_ref_arch/data360-gcp.png` | `https://lucid.app/lucidchart/editNew/4661f0e4-e86a-409b-9a98-8301cbbca74f` |
+| Zero-Copy AWS / Redshift | `https://architect.salesforce.com/docs/architect/reference-diagrams/guide/aws-data-360` | `https://architect.salesforce.com/ns-assets/data360_ref_arch/data360-aws.png` | `https://lucid.app/lucidchart/editNew/04991364-85c0-45e6-b5de-553367fbb473` |
+| Data 360 Capability Map | `https://architect.salesforce.com/docs/architect/reference-diagrams/guide/data-360-technical-capability-map` | `https://architect.salesforce.com/ns-assets/reference-architectures/data-360-technical-capability-map.webp` | `https://lucid.app/lucidchart/editNewOrRegister/9b36e287-525d-472c-92ec-729bca136540` |
+| Solution Architecture index | `https://architect.salesforce.com/docs/architect/reference-diagrams/guide/section-solution-architecture.html` | — | — |
+
+#### T2 — Partner Page URLs
+
+| Capability | T2 Primary URL |
 |---|---|
 | Zero-Copy Databricks | `https://www.salesforce.com/eu/data/partners/databricks/` |
 | Zero-Copy BigQuery | `https://www.salesforce.com/eu/data/partners/google-bigquery/` |
@@ -278,14 +299,36 @@ At workspace scaffold time, resolve and store as a session variable `PARTNER_PAG
 | Calculated Insights | `https://www.salesforce.com/eu/data/` |
 | Data Actions | `https://www.salesforce.com/eu/data/` |
 
+#### Enrichment Rules Per File
+
+| File | Primary Tier | Source to Fetch |
+|---|---|---|
+| `01-why-{capability}.md` | T2 | Partner page — business value, quotes, customer stories |
+| `02-architecture-overview.md` | **T1** | Reference architecture page — official diagram + Lucidchart; Data 360 Capability Map |
+| `03–07` topic files | T2 + T3 | Partner page enrichment block; Developer docs for CLI/API syntax |
+| `08-well-architected.md` | **T1** | Reference architecture for ADR validation; T3 for limits |
+| `09-delivery-checklist.md` | T2 | Customer evidence and product positioning |
+
+#### Reference Block Format for T1 Sources
+
+In any file that references a T1 source, use this block (in addition to the standard `What Salesforce Says` T2 block):
+
+```markdown
+> 🏛️ **Reference Architecture**
+> [Zero-Copy Data Integration Architecture — Salesforce Data 360 × {Platform}]({T1_PAGE_URL})
+> — [Salesforce Architect · Reference Diagrams](https://architect.salesforce.com/docs/architect/reference-diagrams/guide/section-solution-architecture.html)
+
+[![Official Architecture Diagram]({T1_IMAGE_URL})]({T1_PAGE_URL})
+```
+
 ### Iteration Responsibilities
 
 | Iteration | Files Produced | Web Enrichment |
 |---|---|---|
-| **1 — Strategic Framing** | `00-index.md`, `01-why-{capability}.md`, `02-architecture-overview.md` | Fetch `PARTNER_PAGE_URL` + Data 360 landing page |
-| **2 — Technical Blueprinting** | `03`–`07` (one file per technical topic) | Fetch connector/partner-specific pages per topic; inline `⚠️ Pitfalls` callout per file |
-| **3 — Well-Architected Review** | `08-well-architected.md` | Fetch security/governance pages; synthesize cross-cutting pitfalls from all topic files |
-| **4 — Asset Delivery** | `09-delivery-checklist.md` · Drive upload · Slack broadcast · Update parent `Dataforce/README.md` registry · GitHub release tag | — |
+| **1 — Strategic Framing** | `00-index.md`, `01-why-{capability}.md`, `02-architecture-overview.md` | Fetch T1 reference architecture page + T2 partner page + Data 360 Capability Map |
+| **2 — Technical Blueprinting** | `03`–`07` (one file per technical topic) | Fetch T2 partner page per topic; T3 developer docs for CLI/API; inline `⚠️ Pitfalls` per file |
+| **3 — Well-Architected Review** | `08-well-architected.md` | Fetch T1 for ADR validation; T2 security/governance pages; synthesize cross-cutting pitfalls |
+| **4 — Asset Delivery** | `09-delivery-checklist.md` · Drive upload · Slack broadcast · Update parent `Dataforce/README.md` registry · GitHub release tag | T2 customer evidence |
 
 Every capability must cover:
 
